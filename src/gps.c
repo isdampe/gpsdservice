@@ -6,6 +6,7 @@
 #include <curl/curl.h>
 
 #define CAR_GUID "MAZDA"
+#define PUBLIC_KEY "1930261821342254"
 #define APP_DEBUG 1
 #define LOOP_WAIT_TIME 1
 #define SERVER_POST_URL "http://remote/write"
@@ -60,12 +61,12 @@ void post_data(float lat, float lon, float speed, long time) {
 
 	char *buf;
 	size_t sz;
-	sz = snprintf(NULL,0,"car=%s&lat=%f&lon=%f&spd=%f&t=%ld",CAR_GUID,lat,lon,speed,time);
+	sz = snprintf(NULL,0,"k=%s&cr=%s&lt=%f&ln=%f&sp=%f&t=%ld",PUBLIC_KEY,CAR_GUID,lat,lon,speed,time);
 	buf = (char *)malloc(sz + 1);
-	snprintf(buf,sz + 1,"car=%s&lat=%f&lon=%f&spd=%f&t=%ld",CAR_GUID,lat,lon,speed,time);
+	snprintf(buf,sz + 1,"k=%s&cr=%s&lt=%f&ln=%f&sp=%f&t=%ld",PUBLIC_KEY,CAR_GUID,lat,lon,speed,time);
 	
 	if ( APP_DEBUG == 1 ) {
-		printf("car: %s, latitude: %f, longitude: %f, speed: %f, timestamp: %ld\n",CAR_GUID, lat, lon, speed, time);
+		printf("key: %s, car: %s, latitude: %f, longitude: %f, speed: %f, timestamp: %ld\n",PUBLIC_KEY,CAR_GUID, lat, lon, speed, time);
 	}
 
 	CURL *curl;
@@ -85,9 +86,17 @@ void post_data(float lat, float lon, float speed, long time) {
 		//Set buf as post data.
 		curl_easy_setopt(curl, CURLOPT_POSTFIELDS, buf);
 
+		//Set timeout
+		curl_easy_setopt(curl, CURLOPT_TIMEOUT, 10L);
+
 		//Trigger CURL request.
 		res = curl_easy_perform(curl);
-			
+		if ( APP_DEBUG == 1 ) {
+			if ( res != CURLE_OK ) {
+				printf("Error performing requested, likely timeout or cant resolve DNS");
+			}
+		}
+
 		//Free memory
 		curl_easy_cleanup(curl);
 	}
