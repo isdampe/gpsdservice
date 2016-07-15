@@ -71,15 +71,10 @@ void post_data(float lat, float lon, float speed, long time) {
 	CURL *curl;
 	CURLcode res;
 
-	/* In windows, this will init the winsock stuff */ 
 	curl_global_init(CURL_GLOBAL_ALL);
-
-	/* get a curl handle */ 
 	curl = curl_easy_init();
 	if(curl) {
-		/* First set the URL that is about to receive our POST. This URL can
-			 just as well be a https:// URL if that is what should receive the
-			 data. */ 
+	
 		curl_easy_setopt(curl, CURLOPT_URL, SERVER_POST_URL);
 		
 		if ( APP_DEBUG == 0 ) {
@@ -87,13 +82,13 @@ void post_data(float lat, float lon, float speed, long time) {
 			curl_easy_setopt(curl, CURLOPT_NOBODY,1);
 		}
 
-		/* Now specify the POST data */ 
+		//Set buf as post data.
 		curl_easy_setopt(curl, CURLOPT_POSTFIELDS, buf);
 
-		/* Perform the request, res will get the return code */ 
+		//Trigger CURL request.
 		res = curl_easy_perform(curl);
 			
-		/* always cleanup */ 
+		//Free memory
 		curl_easy_cleanup(curl);
 	}
 	curl_global_cleanup();

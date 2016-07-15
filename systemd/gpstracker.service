@@ -1,0 +1,14 @@
+[Unit]
+Description=GPS Tracker
+
+[Service]
+ExecStart=/root/gps/build/gpd
+Restart=always
+User=root
+Group=root
+Environment=PATH=/usr/bin:/usr/local/bin
+Environment=production
+WorkingDirectory=/root/gps
+
+[Install]
+WantedBy=multi-user.target
